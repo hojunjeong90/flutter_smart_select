@@ -3,9 +3,11 @@ import '../widget.dart';
 
 /// Default trigger/tile widget
 class S2Tile<T> extends StatelessWidget {
-
   /// The value of the selected option.
   final String value;
+  MaterialColor valueColor;
+  TextStyle valueStyle;
+  TextStyle titleStyle;
 
   /// Called when the user taps this list tile.
   ///
@@ -92,6 +94,9 @@ class S2Tile<T> extends StatelessWidget {
     this.hideValue = false,
     this.padding,
     this.body,
+    this.valueColor,
+    this.titleStyle,
+    this.valueStyle,
   }) : super(key: key);
 
   /// Create a default trigger widget from state
@@ -112,23 +117,25 @@ class S2Tile<T> extends StatelessWidget {
     this.hideValue = false,
     this.padding,
     this.body,
-  }) :
-    title = title ?? state.titleWidget,
-    value = value ?? state.valueDisplay,
-    onTap = onTap ?? state.showModal,
-    super(key: key);
+    this.valueColor,
+    this.titleStyle,
+    this.valueStyle,
+  })  : title = title ?? state.titleWidget,
+        value = value ?? state.valueDisplay,
+        onTap = onTap ?? state.showModal,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return body == null
-      ? _tileWidget
-      : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _tileWidget,
-            body,
-          ],
-        );
+        ? _tileWidget
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _tileWidget,
+              body,
+            ],
+          );
   }
 
   Widget get _tileWidget {
@@ -147,43 +154,43 @@ class S2Tile<T> extends StatelessWidget {
 
   Widget get _trailingWidget {
     return isTwoLine != true && hideValue != true
-      ? Container(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                constraints: const BoxConstraints(maxWidth: 100),
-                child: _valueWidget,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5),
-                child: _trailingIconWidget,
-              ),
-            ],
-          ),
-        )
-      : _trailingIconWidget;
+        ? Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 100),
+                  child: _valueWidget,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: _trailingIconWidget,
+                ),
+              ],
+            ),
+          )
+        : _trailingIconWidget;
   }
 
   Widget get _trailingIconWidget {
     return isLoading != true
-      ? trailing != null
-        ? trailing
-        : const Icon(Icons.keyboard_arrow_right, color: Colors.grey)
-      : const SizedBox(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.black45),
-            strokeWidth: 1.5,
-          ),
-          height: 16.0,
-          width: 16.0,
-        );
+        ? trailing != null
+            ? trailing
+            : Icon(Icons.keyboard_arrow_right, color: valueColor == null ? Colors.grey : valueColor)
+        : const SizedBox(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.black45),
+              strokeWidth: 1.5,
+            ),
+            height: 16.0,
+            width: 16.0,
+          );
   }
 
   Widget get _valueWidget {
     return Text(
       isLoading ? loadingText : value,
-      style: const TextStyle(color: Colors.grey),
+      style: valueStyle == null ? TextStyle(color: Colors.grey) : valueStyle,
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
